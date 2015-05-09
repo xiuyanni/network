@@ -106,11 +106,14 @@ class HiThereDataStoreSqlite(HiThereDataStore):
 
         try:
             c = sqlite3.connect(self.dbname).cursor()
-            c.execute("SELECT users.username, users.latitude, users.longtitude  FROM users JOIN (SELECT username_2 FROM friends WHERE username_1=?) AS temp ON temp.username_2=users.username",username)
+            c.execute("SELECT users.username, users.latitude, users.longtitude  FROM users JOIN (SELECT username_2 FROM friends WHERE username_1=?) AS temp ON temp.username_2=users.username",[username])
             
             rows = c.fetchall()
             print rows
             return rows
+
+           # print  [(u'bob@gmail.com', u'976', u'787'), (u'cherry@gmail.com', u'1276', u'689')]
+
 
         except:
             print "Tell friends: fail to get user [", username, "]'s friends."
@@ -381,6 +384,7 @@ class PostHandler(BaseHTTPRequestHandler):
         values = [form[k].value for k in form.keys()]
         dict = {k.lower(): v for k, v in zip(form.keys(), values)}
         print dict
+
         response = HiThereProtocolJSON.process(dict)
         assert response is not None
         print response
