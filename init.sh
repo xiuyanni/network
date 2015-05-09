@@ -12,3 +12,4 @@ curl -i -X POST    -H "Content-Type:application/x-www-form-urlencoded"    -d "co
 curl -i -X POST    -H "Content-Type:application/x-www-form-urlencoded"    -d "command=checkin"  -d "username=bob@gmail.com"  -d "latitude=976" -d "longtitude=787"  'http://127.0.0.1:8080'
 curl -i -X POST    -H "Content-Type:application/x-www-form-urlencoded"    -d "command=checkin"  -d "username=cherry@gmail.com"  -d "latitude=1276" -d "longtitude=689"  'http://127.0.0.1:8080'
 
+curl -i -X POST    -H "Content-Type:application/x-www-form-urlencoded"    -d "command=getfriendlist"  -d "username=alice@gmail.com"  'http://127.0.0.1:8080'
