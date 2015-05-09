@@ -10,9 +10,9 @@ HTDATASTORE_DBNAME = 'HiThere.db'
 
 class HiThereDataStore:
     """
-		HiThere DataStore (Abstract class)
-		Store/Retrieve Data
-	"""
+        HiThere DataStore (Abstract class)
+        Store/Retrieve Data
+    """
     __metaclass__ = ABCMeta
 
     def store(self, username, nickname, password):
@@ -30,32 +30,39 @@ class HiThereDataStore:
     def add_friend(self, username_1, username_2):
         return NotImplemented
 
+import os
 
 class HiThereDataStoreSqlite(HiThereDataStore):
     """
-		HiThere DataStore Implementation using Sqlite3
-		Refer: https://docs.python.org/2/library/sqlite3.html
+        HiThere DataStore Implementation using Sqlite3
+        Refer: https://docs.python.org/2/library/sqlite3.html
 
-		Use Sqlite to store or retrieve data
-	"""
+        Use Sqlite to store or retrieve data
+    """
 
     def __init__(self):
         """
-			Initialize database
-		"""
+            Initialize database
+        """
         self.dbname = HTDATASTORE_DBNAME
+
+        try:
+            os.remove(self.dbname)
+        except:
+            pass
+
         _conn = sqlite3.connect(self.dbname)
         _conn.execute("CREATE TABLE users(id integer primary key, username varchar unique, \
-			nickname, password, latitude, longtitude)")
+            nickname, password, latitude, longtitude)")
         _conn.execute("CREATE TABLE friends(username_1, username_2, share)")
-     #   _conn.execute("CREATE TABLE locations(username, latitude, longtitude, share)")
+        #_conn.execute("CREATE TABLE locations(username, latitude, longtitude, share)")
 
     # _conn.execute("CREATE TABLE groups(groupname, crealt, share)")
 
     def store(self, username, nickname, password):
         """
-			create a new user
-		"""
+            create a new user
+        """
         try:
             _conn = sqlite3.connect(self.dbname)
             c = _conn.cursor()
@@ -70,8 +77,8 @@ class HiThereDataStoreSqlite(HiThereDataStore):
 
     def query(self, username):
         """
-			return {'username' : <username>, 'password' : <password>}
-		"""
+            return {'username' : <username>, 'password' : <password>}
+        """
         try:
             c = sqlite3.connect(self.dbname).cursor()
             c.execute("SELECT * FROM users WHERE username=?", [username])
@@ -99,9 +106,12 @@ class HiThereDataStoreSqlite(HiThereDataStore):
 
         try:
             c = sqlite3.connect(self.dbname).cursor()
-            c.execute("SELECT * FROM friends WHERE username_1=?", [username])
-            row = c.fetchone()
-            return row
+            c.execute("SELECT users.username, users.latitude, users.longtitude  FROM users JOIN (SELECT username_2 FROM friends WHERE username_1=?) AS temp ON temp.username_2=users.username",username)
+            
+            rows = c.fetchall()
+            print rows
+            return rows
+
         except:
             print "Tell friends: fail to get user [", username, "]'s friends."
         return None
@@ -116,7 +126,8 @@ class HiThereDataStoreSqlite(HiThereDataStore):
             _conn.commit()
         except:
             print "add friend: fail to add friend [", username_2, "] to the user [", username_1, "]"
-        return None
+            return False
+        return True
 
 
     # create a new instance for DataStore (here, we use Sqlite implementation)
@@ -130,15 +141,15 @@ INVALID_CMDJSON = '{"Status" : "Fail", "Reason" : "Invalid Request"}'
 
 class HiThereProtocol:
     """
-		HiThere Communication Protocol (Abstract Class)
-	"""
+        HiThere Communication Protocol (Abstract Class)
+    """
     __metaclass__ = ABCMeta
 
     @staticmethod
     def process(dict):
         """
-			Ultrimate Interface to HiThereProtocol
-		"""
+            Ultrimate Interface to HiThereProtocol
+        """
         if 'command' not in dict.keys():
             return INVALID_CMDJSON
         try:
@@ -154,15 +165,15 @@ class HiThereProtocol:
     @staticmethod
     def register(d):
         """
-			Register new user
-		"""
+            Register new user
+        """
         return NotImplemented
 
     @staticmethod
     def login(d):
         """
-			User Login
-		"""
+            User Login
+        """
         return NotImplemented
 
     # TODO
@@ -170,10 +181,10 @@ class HiThereProtocol:
     @staticmethod
     def checkin(d):
         """
-			Check-in user's location
-			INPUT:
-				{"username" : "alice@gmail.com", "latitude" : -128.00, "longtitude" : 20.00"}
-		"""
+            Check-in user's location
+            INPUT:
+                {"username" : "alice@gmail.com", "latitude" : -128.00, "longtitude" : 20.00"}
+        """
         return NotImplemented
 
 
@@ -183,46 +194,46 @@ class HiThereProtocol:
     @staticmethod
     def getfriendlist(d, b):
         """
-			Get Friend list
-			Input: 
-				d - dictionary of parameters
-				b - whether include locations 
-		"""
+            Get Friend list
+            Input:
+                d - dictionary of parameters
+                b - whether include locations
+        """
         return NotImplemented
 
 
     @staticmethod
     def addfriend(d):
         """
-            		Get Friend list
-            		Input: 
-            		d - dictionary of parameters
-		"""
+                    Get Friend list
+                    Input:
+                    d - dictionary of parameters
+        """
         return NotImplemented
 
 
 class HiThereProtocolJSON(HiThereProtocol):
     """
-		HiThere Communication Protocol Implementation in JSON (Response)
-		
-		Input: dictionary of request, e.g.
-			{ "command" : "register", "username" : "alice@gmail.com", "password" : "123"}
+        HiThere Communication Protocol Implementation in JSON (Response)
 
-		Output: (JSON) e.g.
-			{ "Status" : "OK"} (if sucess)
-			{ "Status" : "Fail", "Reason" : "Invalid Parameter"} (If fail)
-	"""
+        Input: dictionary of request, e.g.
+            { "command" : "register", "username" : "alice@gmail.com", "password" : "123"}
+
+        Output: (JSON) e.g.
+            { "Status" : "OK"} (if sucess)
+            { "Status" : "Fail", "Reason" : "Invalid Parameter"} (If fail)
+    """
 
     @staticmethod
     def register(dict):
         """
-			Register a user 
-			INPUT: 
-			{ "command" : "register", "username" : "alice@gmail.com", "password" : "123"}
-			OUTPUT:
-			{ "Status" : "OK"} (if sucess)
-			{ "Status" : "Fail", "Reason" : "Invalid Parameter"} (If fail)
-		"""
+            Register a user
+            INPUT:
+            { "command" : "register", "username" : "alice@gmail.com", "password" : "123"}
+            OUTPUT:
+            { "Status" : "OK"} (if sucess)
+            { "Status" : "Fail", "Reason" : "Invalid Parameter"} (If fail)
+        """
         assert 'command' in dict.keys()
         assert dict['command'] == 'register'
 
@@ -292,6 +303,7 @@ class HiThereProtocolJSON(HiThereProtocol):
             latitude = dict['latitude']
             longtitude = dict['longtitude']
             success = HTDataStore.update_location(username, latitude, longtitude)
+         #   print "success:", success
 
             if success:
                 print "Checkin: user [", username, "] updated location."
@@ -307,11 +319,24 @@ class HiThereProtocolJSON(HiThereProtocol):
         """
                     Get Friend List
                     INPUT:
-                    { "command" : "GetFriends", "username" : "alice@gmail.com"}
+                    { "command" : "getfriendlist", "username" : "alice@gmail.com"}
                     OUTPUT:
                     { "Status" : "OK"} (if sucess)
                     { "Status" : "Fail", "Reason" : "Invalid Parameter"} (If fail)
                 """
+        assert 'command' in dict.keys()
+        assert dict['command'] == 'getfriendlist'
+
+        try:
+            username = dict['username']
+            row = HTDataStore.tell_friends(username)
+            print row
+            return row
+
+        except:
+            print "Get Friend List: friend list for user [", username, "] cannot be returned."
+            return '{"Status" : "Fail"}'
+
 
 
     @staticmethod
@@ -319,7 +344,7 @@ class HiThereProtocolJSON(HiThereProtocol):
         """
                     Get Friend List
                     INPUT:
-                    { "command" : "addFriend", "username1" : "alice@gmail.com", "username2" : "bob@gmail.com"}
+                    { "command" : "addfriend", "username1" : "alice@gmail.com", "username2" : "bob@gmail.com"}
                     OUTPUT:
                     { "Status" : "OK"} (if sucess)
                     { "Status" : "Fail", "Reason" : "Invalid Parameter"} (If fail)
