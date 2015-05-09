@@ -26,8 +26,8 @@
       <file leaf-file-name="htserver.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/htserver.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-1.1875" vertical-offset="2166" max-vertical-offset="6090">
-              <caret line="114" column="1" selection-start-line="114" selection-start-column="1" selection-end-line="114" selection-end-column="1" />
+            <state vertical-scroll-proportion="-4.0" vertical-offset="5706" max-vertical-offset="6090">
+              <caret line="278" column="52" selection-start-line="278" selection-start-column="52" selection-end-line="278" selection-end-column="52" />
               <folding>
                 <element signature="e#23#72#0" expanded="true" />
               </folding>
@@ -402,8 +402,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/htserver.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-1.1875" vertical-offset="2166" max-vertical-offset="6090">
-          <caret line="114" column="1" selection-start-line="114" selection-start-column="1" selection-end-line="114" selection-end-column="1" />
+        <state vertical-scroll-proportion="-4.0" vertical-offset="5706" max-vertical-offset="6090">
+          <caret line="278" column="52" selection-start-line="278" selection-start-column="52" selection-end-line="278" selection-end-column="52" />
           <folding>
             <element signature="e#23#72#0" expanded="true" />
           </folding>
