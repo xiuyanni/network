@@ -394,6 +394,7 @@ class PostHandler(BaseHTTPRequestHandler):
 if __name__ == '__main__':
     from BaseHTTPServer import HTTPServer
 
+#    server = HTTPServer(('146.96.28.105', 8080), PostHandler)
     server = HTTPServer(('127.0.0.1', 8080), PostHandler)
     print 'Starting server, use <Ctrl-C> to stop'
 

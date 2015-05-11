@@ -1,0 +1,1 @@
+SELECT users.username, users.latitude, users.longtitude  FROM users JOIN (SELECT username_2 FROM friends WHERE username_1='alice@gmail.com') AS temp ON temp.username_2=users.username
